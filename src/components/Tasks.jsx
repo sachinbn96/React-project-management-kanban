@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import NewTask from "./NewTask";
-import KanbanBoard from "./kanbanBoard";
+import KanbanBoard from "./KanbanBoard";
 
 export default function Tasks({
   tasks,

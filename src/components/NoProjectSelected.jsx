@@ -1,5 +1,3 @@
-import Button from "./Button";
-
 export default function NoProjectSelected({ handleAddProjectButton }) {
   return (
     <div className="mt-24 text-center w-2/3">
