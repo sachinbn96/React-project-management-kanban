@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+
 import TaskCard from "./TaskCard";
 
 export default function KanbanBoard({ taskList }) {
@@ -13,22 +14,131 @@ export default function KanbanBoard({ taskList }) {
     setCompletedList(taskList.filter((task) => task.status === "DONE"));
   }, [taskList]);
 
-  //   console.log(toDoList);
-
   function handleDragEnd(dragResult) {
-    // console.log(dragResult);
     // update state
+    // reorder if same column
+    if (dragResult.source.droppableId === dragResult.destination.droppableId) {
+      if (dragResult.source.droppableId === "TODO") {
+        setToDoList((prev) => {
+          const [reorderedItem] = prev.splice(dragResult.source.index, 1);
+          prev.splice(dragResult.destination.index, 0, reorderedItem);
+          return prev;
+        });
+      } else if (dragResult.source.droppableId === "IN_PROGRESS") {
+        setInProgressList((prev) => {
+          const [reorderedItem] = prev.splice(dragResult.source.index, 1);
+          prev.splice(dragResult.destination.index, 0, reorderedItem);
+          return prev;
+        });
+      } else if (dragResult.source.droppableId === "DONE") {
+        setCompletedList((prev) => {
+          const [reorderedItem] = prev.splice(dragResult.source.index, 1);
+          prev.splice(dragResult.destination.index, 0, reorderedItem);
+          return prev;
+        });
+      }
+    }
+    // dropping to different column
+    else {
+      switch (dragResult.destination.droppableId) {
+        case "IN_PROGRESS":
+          if (dragResult.source.droppableId === "TODO") {
+            let reorderedItem;
+            setToDoList((prev) => {
+              [reorderedItem] = prev.splice(dragResult.source.index, 1);
+              return prev;
+            });
+            setInProgressList((prev) => {
+              prev.splice(dragResult.destination.index, 0, reorderedItem);
+              return prev;
+            });
+          }
+          if (dragResult.source.droppableId === "DONE") {
+            let reorderedItem;
+            setCompletedList((prev) => {
+              [reorderedItem] = prev.splice(dragResult.source.index, 1);
+              return prev;
+            });
+            setInProgressList((prev) => {
+              prev.splice(dragResult.destination.index, 0, reorderedItem);
+              return prev;
+            });
+          }
+          break;
+        case "DONE":
+          if (dragResult.source.droppableId === "TODO") {
+            let reorderedItem;
+            setToDoList((prev) => {
+              [reorderedItem] = prev.splice(dragResult.source.index, 1);
+              return prev;
+            });
+            setCompletedList((prev) => {
+              prev.splice(dragResult.destination.index, 0, reorderedItem);
+              return prev;
+            });
+          }
+          if (dragResult.source.droppableId === "IN_PROGRESS") {
+            let reorderedItem;
+            setInProgressList((prev) => {
+              [reorderedItem] = prev.splice(dragResult.source.index, 1);
+              return prev;
+            });
+            setCompletedList((prev) => {
+              prev.splice(dragResult.destination.index, 0, reorderedItem);
+              return prev;
+            });
+          }
+          break;
+        case "TODO":
+          if (dragResult.source.droppableId === "IN_PROGRESS") {
+            let reorderedItem;
+            setInProgressList((prev) => {
+              [reorderedItem] = prev.splice(dragResult.source.index, 1);
+              return prev;
+            });
+            setToDoList((prev) => {
+              prev.splice(dragResult.destination.index, 0, reorderedItem);
+              return prev;
+            });
+          }
+          if (dragResult.source.droppableId === "DONE") {
+            let reorderedItem;
+            setCompletedList((prev) => {
+              [reorderedItem] = prev.splice(dragResult.source.index, 1);
+              return prev;
+            });
+            setToDoList((prev) => {
+              prev.splice(dragResult.destination.index, 0, reorderedItem);
+              return prev;
+            });
+          }
+          break;
+      }
+    }
+
     // api call to update in backend
+    const draggedTask = taskList.find(
+      (elem) => elem.id === +dragResult.draggableId
+    );
+    draggedTask.status = dragResult.destination.droppableId;
+    fetch(`http://localhost:8000/api/tasks/${draggedTask.id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Basic " + btoa("admin:admin"),
+      },
+      body: JSON.stringify(draggedTask),
+    });
   }
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-4 mt-4">
         {/* to do */}
-        <Droppable droppableId="todo">
+        <Droppable droppableId="TODO">
           {(provided) => (
             <div
-              key="todo"
+              key="TODO"
               className="bg-gray-200 rounded-lg p-4 shadow-md"
               {...provided.droppableProps}
               ref={provided.innerRef}
@@ -47,10 +157,10 @@ export default function KanbanBoard({ taskList }) {
         </Droppable>
 
         {/* in progress */}
-        <Droppable droppableId="in_progress">
+        <Droppable droppableId="IN_PROGRESS">
           {(provided) => (
             <div
-              key="in_progress"
+              key="IN_PROGRESS"
               className="bg-gray-200 rounded-lg p-4 shadow-md"
               {...provided.droppableProps}
               ref={provided.innerRef}
@@ -68,11 +178,11 @@ export default function KanbanBoard({ taskList }) {
           )}
         </Droppable>
 
-        {/* completed */}
-        <Droppable droppableId="completed">
+        {/* DONE */}
+        <Droppable droppableId="DONE">
           {(provided) => (
             <div
-              key="completed"
+              key="DONE"
               className="bg-gray-200 rounded-lg p-4 shadow-md"
               {...provided.droppableProps}
               ref={provided.innerRef}

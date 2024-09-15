@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-import NewWorkBoard from "./components/NewWorkBoard";
-import SelectedWorkBoard from "./components/SelectedWorkBoard";
-import ListWorkBoards from "./components/ListWorkBoards";
-// import NoWorkBoardSelected from "./components/NoWorkBoardSelected";
 import Header from "./components/Header";
+import NewWorkBoard from "./components/NewWorkBoard";
+import ListWorkBoards from "./components/ListWorkBoards";
+import NoProjectSelected from "./components/NoProjectSelected";
+import SelectedWorkBoard from "./components/SelectedWorkBoard";
 
 function App() {
   const [projectsState, setWorkBoardsState] = useState({
@@ -16,7 +16,6 @@ function App() {
 
   function handleAddTask(taskData) {
     taskData.task_board = projectsState.selectedWorkBoardId;
-
     fetch("http://localhost:8000/api/tasks/", {
       method: "POST",
       headers: {
@@ -95,7 +94,6 @@ function App() {
       body: JSON.stringify(projectData),
     })
       .then((response) => response.json())
-      // .then((data) => console.log(data));
       .then((data) => {
         setWorkBoardsState((prev) => {
           return {
@@ -120,6 +118,17 @@ function App() {
         ),
       };
     });
+    // api call to delete in backend
+    console.log(projectsState.selectedWorkBoardId);
+    const { id: requiredId } = projectsState.projects.find(
+      (elem) => elem.id == projectsState.selectedWorkBoardId
+    );
+    fetch(`http://localhost:8000/api/taskboards/${requiredId}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Basic " + btoa("admin:admin"),
+      },
+    });
   }
 
   const selectedWorkBoard = projectsState.projects.find(
@@ -139,19 +148,23 @@ function App() {
       handleSaveAddWorkBoard={handleSaveAddWorkBoard}
       handleCancelAddWorkBoard={handleCancelAddWorkBoard}
     />
-  ) : null;
+  ) : (
+    <NoProjectSelected handleAddProjectButton={handleAddWorkBoardButton} />
+  );
   return (
-    <main className="h-screen my-8 gap-8">
-      <Header />
-      <ListWorkBoards
-        handleAddWorkBoardButton={handleAddWorkBoardButton}
-        workBoards={projectsState.projects}
-        handleSetWorkBoards={handleSetWorkBoards}
-        handleSelectWorkBoard={handleSelectWorkBoard}
-        selectedWorkBoardId={projectsState.selectedWorkBoardId}
-      />
-      {content}
-    </main>
+    <div className="flex justify-center">
+      <main className="h-screen my-8 gap-8  justify-center">
+        <Header />
+        <ListWorkBoards
+          handleAddWorkBoardButton={handleAddWorkBoardButton}
+          workBoards={projectsState.projects}
+          handleSetWorkBoards={handleSetWorkBoards}
+          handleSelectWorkBoard={handleSelectWorkBoard}
+          selectedWorkBoardId={projectsState.selectedWorkBoardId}
+        />
+        {content}
+      </main>
+    </div>
   );
 }
 

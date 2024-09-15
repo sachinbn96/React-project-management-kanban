@@ -23,7 +23,7 @@ export default function Tasks({
   // console.log(tasks);
   return (
     <>
-      <section>
+      <section className="flex justify-between">
         <h2 className="text-2xl font-bold text-stone-700 mb-4">TASKS</h2>
         <NewTask handleAddTask={handleAddTask} />
         {
