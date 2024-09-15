@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 import TaskCard from "./TaskCard";
+import { backend_url } from "../assets/constants";
 
 export default function KanbanBoard({ taskList }) {
   const [toDoList, setToDoList] = useState([]);
@@ -121,7 +122,7 @@ export default function KanbanBoard({ taskList }) {
       (elem) => elem.id === +dragResult.draggableId
     );
     draggedTask.status = dragResult.destination.droppableId;
-    fetch(`http://localhost:8000/api/tasks/${draggedTask.id}/`, {
+    fetch(`${backend_url}/api/tasks/${draggedTask.id}/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

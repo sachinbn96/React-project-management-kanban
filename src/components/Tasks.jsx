@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import NewTask from "./NewTask";
 import KanbanBoard from "./KanbanBoard";
+import { backend_url } from "../assets/constants";
 
 export default function Tasks({
   tasks,
@@ -11,7 +12,7 @@ export default function Tasks({
 }) {
   useEffect(() => {
     async function fetchTasks() {
-      const response = await fetch("http://localhost:8000/api/tasks", {
+      const response = await fetch(`${backend_url}/api/tasks`, {
         method: "GET",
         headers: { Authorization: "Basic " + btoa("admin:admin") },
       });

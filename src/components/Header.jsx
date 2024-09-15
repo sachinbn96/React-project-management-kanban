@@ -1,6 +1,6 @@
 export default function Header() {
   return (
-    <div className="flex justify-between items-center m-6">
+    <div className="flex justify-center m-6">
       <h1 className="text-3xl font-bold">Create/Select a WorkBoard</h1>
       {/* to do later */}
       {/* <div className="flex items-center space-x-4">

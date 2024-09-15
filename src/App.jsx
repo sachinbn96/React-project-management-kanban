@@ -5,6 +5,7 @@ import NewWorkBoard from "./components/NewWorkBoard";
 import ListWorkBoards from "./components/ListWorkBoards";
 import NoProjectSelected from "./components/NoProjectSelected";
 import SelectedWorkBoard from "./components/SelectedWorkBoard";
+import { backend_url } from "./assets/constants";
 
 function App() {
   const [projectsState, setWorkBoardsState] = useState({
@@ -13,10 +14,19 @@ function App() {
     projects: [],
     tasks: [],
   });
+  const [newWorkBoardModalOpen, setNewWorkBoardModalOpen] = useState(false);
+
+  function handleAddWorkBoardModalOpen() {
+    setNewWorkBoardModalOpen(true);
+  }
+
+  function handleAddWorkBoardModalClose() {
+    setNewWorkBoardModalOpen(false);
+  }
 
   function handleAddTask(taskData) {
     taskData.task_board = projectsState.selectedWorkBoardId;
-    fetch("http://localhost:8000/api/tasks/", {
+    fetch(`${backend_url}/api/tasks/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -57,6 +67,7 @@ function App() {
   }
 
   function handleAddWorkBoardButton() {
+    handleAddWorkBoardModalOpen();
     setWorkBoardsState((prev) => {
       return {
         ...prev,
@@ -85,7 +96,7 @@ function App() {
   }
 
   function handleSaveAddWorkBoard(projectData) {
-    fetch("http://localhost:8000/api/taskboards/", {
+    fetch(`${backend_url}/api/taskboards/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -123,7 +134,7 @@ function App() {
     const { id: requiredId } = projectsState.projects.find(
       (elem) => elem.id == projectsState.selectedWorkBoardId
     );
-    fetch(`http://localhost:8000/api/taskboards/${requiredId}/`, {
+    fetch(`${backend_url}/api/taskboards/${requiredId}/`, {
       method: "DELETE",
       headers: {
         Authorization: "Basic " + btoa("admin:admin"),
@@ -147,6 +158,8 @@ function App() {
     <NewWorkBoard
       handleSaveAddWorkBoard={handleSaveAddWorkBoard}
       handleCancelAddWorkBoard={handleCancelAddWorkBoard}
+      handleAddWorkBoardModalClose={handleAddWorkBoardModalClose}
+      newWorkBoardModalOpen={newWorkBoardModalOpen}
     />
   ) : (
     <NoProjectSelected handleAddProjectButton={handleAddWorkBoardButton} />

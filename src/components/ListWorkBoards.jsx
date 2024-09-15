@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 import Button from "./Button";
+import { backend_url } from "../assets/constants";
 
 export default function ListWorkBoards({
   handleAddWorkBoardButton,
@@ -8,10 +9,11 @@ export default function ListWorkBoards({
   handleSelectWorkBoard,
   selectedWorkBoardId,
   handleSetWorkBoards,
+  handleAddWorkBoardModalOpen,
 }) {
   useEffect(() => {
     async function fetchWorkBoards() {
-      const response = await fetch("http://localhost:8000/api/taskboards", {
+      const response = await fetch(`${backend_url}/api/taskboards`, {
         method: "GET",
         headers: { Authorization: "Basic " + btoa("admin:admin") },
       });
@@ -22,7 +24,7 @@ export default function ListWorkBoards({
   }, []);
 
   return (
-    <div className="flex">
+    <div className="flex justify-center">
       <Button
         onClick={handleAddWorkBoardButton}
         className="bg-white text-gray-500 border-gray-500 border-2 p-12 ml-6 mr-2 rounded-xl h-12 w-12 flex items-center justify-center hover:bg-gray-200"
@@ -36,7 +38,7 @@ export default function ListWorkBoards({
         if (eachWorkBoard.id === selectedWorkBoardId) {
           cssClasses += " bg-stone-800 text-stone-200";
         } else {
-          cssClasses += "  text-stone-400";
+          cssClasses += "  text-gray-700";
         }
 
         return (
