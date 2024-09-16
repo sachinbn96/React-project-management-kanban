@@ -1,8 +1,18 @@
-# React + Vite
+Project management app similar to kanban board built using ReactJS and Django REST Framework 
+This is the react repo 
+be Repo: https://github.com/sachinbn96/DRF-project-management-kanban
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend deployed using vercel at: https://react-project-management-kanban.vercel.app/ 
+Backend deplyed using railway deployed at: https://drf-project-management-kanban-production.up.railway.app/admin
 
-Currently, two official plugins are available:
+Local front end setup:
+npm install
+npm run dev
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Local backend Setup:
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+
+Change backend_url to localhost in the constants.js file when running both locally
